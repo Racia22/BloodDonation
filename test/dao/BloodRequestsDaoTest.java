@@ -28,27 +28,19 @@ import java.util.List;
 /**
  * Test class for BloodRequestsDao operations.
  * 
- * CHANGE: Added comprehensive JavaDoc comments following Google Java Style Guide
- * PURPOSE: Document test class purpose and usage
+
  */
 public class BloodRequestsDaoTest {
     
     private BloodRequestsDao bloodRequestsDao;
     private BloodRequest testBloodRequest;
     
-    /**
-     * CHANGE: Added setUp method with proper initialization
-     * PURPOSE: Initialize test objects before each test method execution
-     * This follows JUnit best practices for test setup
-     */
+   
     @Before
     public void setUp() {
-        // CHANGE: Initialize BloodRequestsDao instance before each test
-        // PURPOSE: Ensure fresh instance for each test to avoid state pollution
+       
         bloodRequestsDao = new BloodRequestsDao();
         
-        // CHANGE: Create test blood request object with sample data
-        // PURPOSE: Provide consistent test data for all test methods
         testBloodRequest = new BloodRequest();
         testBloodRequest.setHospital_name("Test Hospital");
         testBloodRequest.setBlood_group("O+");
@@ -57,15 +49,10 @@ public class BloodRequestsDaoTest {
         testBloodRequest.setStatus("Pending");
     }
     
-    /**
-     * CHANGE: Added tearDown method for cleanup
-     * PURPOSE: Clean up test data after test execution
-     * This ensures test isolation and prevents test interference
-     */
+  
     @After
     public void tearDown() {
-        // CHANGE: Clean up test blood request if it exists
-        // PURPOSE: Maintain clean test database state
+        
         if (testBloodRequest.getRequest_id() > 0) {
             bloodRequestsDao.deleterequest(testBloodRequest);
         }
@@ -73,17 +60,10 @@ public class BloodRequestsDaoTest {
         testBloodRequest = null;
     }
     
-    /**
-     * Test Case TC_REQUEST_001: Register Blood Request with Valid Data
-     * 
-     * CHANGE: Created test method for blood request registration
-     * PURPOSE: Verify that valid blood request registration works correctly
-     * Tests requirement: Blood requests can be successfully registered in the system
-     */
+  
     @Test
     public void testRegisterrequest_ValidData_ReturnsGreaterThanZero() {
-        // CHANGE: Test blood request registration with valid data
-        // PURPOSE: Verify registerrequest() returns value greater than 0
+        
         int result = bloodRequestsDao.registerrequest(testBloodRequest);
         
         // CHANGE: Assert that registration was successful

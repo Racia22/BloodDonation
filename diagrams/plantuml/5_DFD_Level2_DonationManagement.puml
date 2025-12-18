@@ -1,0 +1,96 @@
+@startuml DFD Level 2 - Donation Management
+title Donation Management - Level 2 DFD (Clean Layout)
+
+skinparam rectangle {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+}
+
+skinparam storage {
+    BackgroundColor LightPink
+    BorderColor DarkRed
+}
+
+actor Donor
+actor "Staff/Admin" as Staff
+database "PostgreSQL Database" as DB
+
+rectangle "3.0 Donation Management" {
+    
+    ' Data Stores - Positioned on the right side
+    storage "D2: Donors" as D2
+    storage "D3: Donations" as D3
+    storage "D4: Sites" as D4
+    
+    ' Processes - Positioned on the left side, top to bottom
+    rectangle "3.1\nValidate\nDonation Input" as Process31
+    rectangle "3.2\nValidate\nDonor & Site" as Process32
+    rectangle "3.3\nRegister\nDonation" as Process33
+    rectangle "3.4\nUpdate\nDonation" as Process34
+    rectangle "3.5\nView\nDonations" as Process35
+}
+
+' ============================================
+' FLOW 1: REGISTER NEW DONATION
+' ============================================
+
+Donor -right-> Process31: 1. Donation Details\n(donor_id, site_id,\nblood_group, quantity)
+
+Process31 -down-> Process32: 2. Validated Input
+Process31 -left-> Donor: 2a. Validation Error
+
+Process32 -right-> D2: 3. Request Donor Info
+D2 -left-> Process32: 3a. Donor Data
+
+Process32 -right-> D4: 4. Request Site Info
+D4 -left-> Process32: 4a. Site Data
+
+Process32 -down-> Process33: 5. Donor & Site\nValidated
+
+Process33 -right-> D3: 6. Store Donation Data
+D3 -left-> Process33: 6a. Confirmation
+
+Process33 -left-> Donor: 7. Success Message
+
+' ============================================
+' FLOW 2: UPDATE DONATION
+' ============================================
+
+Staff -right-> Process34: 8. Update Donation\nDetails
+
+Process34 -right-> D2: 9. Request Donor Info\n(if updated)
+D2 -left-> Process34: 9a. Donor Data
+
+Process34 -right-> D4: 10. Request Site Info\n(if updated)
+D4 -left-> Process34: 10a. Site Data
+
+Process34 -right-> D3: 11. Updated Donation Data
+D3 -left-> Process34: 11a. Update Confirmation
+
+Process34 -left-> Staff: 12. Update Status
+
+' ============================================
+' FLOW 3: VIEW DONATIONS
+' ============================================
+
+Staff -right-> Process35: 13. View Request
+
+Process35 -right-> D3: 14. Request Donation\nRecords
+D3 -left-> Process35: 14a. Donation Records
+
+Process35 -left-> Staff: 15. Donation Records\n(Display)
+
+' ============================================
+' DATA PERSISTENCE (Separate section)
+' ============================================
+
+D2 -down-> DB: Donor Data\n(Write)
+DB -up-> D2: Donor Data\n(Read)
+
+D3 -down-> DB: Donation Data\n(Write)
+DB -up-> D3: Donation Data\n(Read)
+
+D4 -down-> DB: Site Data\n(Write)
+DB -up-> D4: Site Data\n(Read)
+
+@enduml

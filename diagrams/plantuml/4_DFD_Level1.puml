@@ -1,0 +1,68 @@
+@startuml DFD Level 1
+title Blood Donation Management System - Level 1 DFD
+
+actor Donor
+actor "Staff/Admin" as Staff
+database "PostgreSQL Database" as DB
+
+rectangle "Blood Donation Management System" {
+    rectangle "1.0\nUser Management" as Process1
+    rectangle "2.0\nDonor Management" as Process2
+    rectangle "3.0\nDonation Management" as Process3
+    rectangle "4.0\nSite Management" as Process4
+    rectangle "5.0\nBlood Request Management" as Process5
+    
+    storage "D1: Users" as D1
+    storage "D2: Donors" as D2
+    storage "D3: Donations" as D3
+    storage "D4: Sites" as D4
+    storage "D5: Blood Requests" as D5
+}
+
+' External entities to processes
+Staff --> Process1: Login Credentials
+Staff --> Process1: Registration Info
+Donor --> Process2: Donor Registration Info
+Donor --> Process3: Donation Details
+Donor --> Process5: Blood Request Info
+Staff --> Process4: Site Management Info
+
+' Processes to external entities
+Process1 --> Staff: Authentication Status
+Process2 --> Donor: Donor Records
+Process3 --> Staff: Donation Records
+Process5 --> Donor: Blood Availability
+
+' Processes to data stores
+Process1 --> D1: User Data
+D1 --> Process1: User Info
+
+Process2 --> D2: Donor Data
+D2 --> Process2: Donor Info
+D2 --> Process3: Donor Info
+
+Process3 --> D3: Donation Data
+D3 --> Process3: Donation Info
+
+Process4 --> D4: Site Data
+D4 --> Process4: Site Info
+D4 --> Process3: Site Info
+
+Process5 --> D5: Blood Request Data
+D5 --> Process5: Blood Request Info
+
+' Data stores to database
+D1 --> DB: User Data
+D2 --> DB: Donor Data
+D3 --> DB: Donation Data
+D4 --> DB: Site Data
+D5 --> DB: Blood Request Data
+
+DB --> D1: User Data
+DB --> D2: Donor Data
+DB --> D3: Donation Data
+DB --> D4: Site Data
+DB --> D5: Blood Request Data
+
+@enduml
+

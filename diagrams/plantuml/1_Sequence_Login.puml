@@ -1,0 +1,44 @@
+@startuml Login Sequence Diagram
+title User Login Sequence Diagram
+
+actor User
+participant "Login View" as LoginView
+participant "UserController" as Controller
+participant "UserDao" as DAO
+database "PostgreSQL Database" as DB
+
+User -> LoginView: 1. Enter username & password
+User -> LoginView: 2. Click Login Button
+activate LoginView
+
+LoginView -> LoginView: 3. Validate inputs (not empty)
+LoginView -> Controller: 4. authenticateUser(username, password)
+activate Controller
+
+Controller -> Controller: 5. Validate input parameters
+Controller -> DAO: 6. authenticateUser(username, password)
+activate DAO
+
+DAO -> DB: 7. SELECT * FROM users\nWHERE user_name=? AND password=?
+activate DB
+DB --> DAO: 8. Return User record or null
+deactivate DB
+
+alt User found
+    DAO --> Controller: 9. Return User object
+    Controller --> LoginView: 10. Return User object
+    LoginView -> LoginView: 11. Show success message
+    LoginView -> LoginView: 12. Create Dashboard
+    LoginView --> User: 13. Display Dashboard
+else User not found
+    DAO --> Controller: 9. Return null
+    Controller --> LoginView: 10. Return null
+    LoginView --> User: 11. Show error message
+end
+
+deactivate DAO
+deactivate Controller
+deactivate LoginView
+
+@enduml
+

@@ -1,0 +1,41 @@
+@startuml Activity Diagram - User Login
+title User Login Activity Diagram
+
+start
+
+:User opens Login form;
+
+:Enter username and password;
+
+:Click Login button;
+
+if (Inputs empty?) then (yes)
+    :Display warning message;
+    stop
+else (no)
+endif
+
+:Validate username format;
+:Validate password format;
+
+:Call UserController.authenticateUser();
+
+:Call UserDao.authenticateUser();
+
+:Execute SQL query:\nSELECT * FROM users\nWHERE user_name=? AND password=?;
+
+if (User found?) then (yes)
+    :Create User object;
+    :Return User object;
+    :Display success message;
+    :Open Dashboard;
+    :Close Login form;
+    stop
+else (no)
+    :Return null;
+    :Display error message:\n"Incorrect username or password";
+    stop
+endif
+
+@enduml
+

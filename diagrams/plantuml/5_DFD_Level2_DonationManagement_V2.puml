@@ -1,0 +1,99 @@
+@startuml DFD Level 2 - Donation Management (Alternative Layout)
+title Donation Management - Level 2 DFD (No Collisions)
+
+skinparam rectangle {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+}
+
+skinparam storage {
+    BackgroundColor LightPink
+    BorderColor DarkRed
+}
+
+skinparam arrow {
+    Color DarkBlue
+}
+
+' External Entities
+actor Donor
+actor "Staff/Admin" as Staff
+database "PostgreSQL Database" as DB
+
+package "3.0 Donation Management" {
+    
+    ' REGISTRATION FLOW (Left Column)
+    rectangle "3.1\nValidate\nDonation Input" as P31 #LightBlue
+    rectangle "3.2\nValidate\nDonor & Site" as P32 #LightBlue
+    rectangle "3.3\nRegister\nDonation" as P33 #LightBlue
+    
+    ' UPDATE/VIEW FLOW (Right Column)
+    rectangle "3.4\nUpdate\nDonation" as P34 #LightBlue
+    rectangle "3.5\nView\nDonations" as P35 #LightBlue
+    
+    ' DATA STORES (Bottom Row)
+    storage "D2: Donors" as D2 #LightPink
+    storage "D3: Donations" as D3 #LightPink
+    storage "D4: Sites" as D4 #LightPink
+}
+
+' ============================================
+' REGISTRATION FLOW (Vertical, No Collisions)
+' ============================================
+
+Donor --> P31: [1] Donation Details\n(donor_id, site_id,\nblood_group, quantity)
+
+P31 --> P32: [2] Validated Input
+P31 <-- Donor: [2a] Validation Error
+
+P32 --> D2: [3] Request Donor Info
+D2 --> P32: [3a] Donor Data
+
+P32 --> D4: [4] Request Site Info
+D4 --> P32: [4a] Site Data
+
+P32 --> P33: [5] Donor & Site Validated
+
+P33 --> D3: [6] Store Donation Data
+D3 --> P33: [6a] Confirmation
+
+P33 --> Donor: [7] Success Message
+
+' ============================================
+' UPDATE FLOW (Separate, No Collisions)
+' ============================================
+
+Staff --> P34: [8] Update Donation Details
+
+P34 --> D2: [9] Request Donor Info\n(if donor_id updated)
+D2 --> P34: [9a] Donor Data
+
+P34 --> D4: [10] Request Site Info\n(if site_id updated)
+D4 --> P34: [10a] Site Data
+
+P34 --> D3: [11] Updated Donation Data
+D3 --> P34: [11a] Update Confirmation
+
+P34 --> Staff: [12] Update Status
+
+' ============================================
+' VIEW FLOW (Separate, No Collisions)
+' ============================================
+
+Staff --> P35: [13] View Request
+
+P35 --> D3: [14] Request Donation Records
+D3 --> P35: [14a] Donation Records
+
+P35 --> Staff: [15] Display Records
+
+' ============================================
+' DATABASE PERSISTENCE (Bottom, Clear)
+' ============================================
+
+D2 <--> DB: Donor Data\n(Read/Write)
+D3 <--> DB: Donation Data\n(Read/Write)
+D4 <--> DB: Site Data\n(Read/Write)
+
+@enduml
+

@@ -1,0 +1,35 @@
+@startuml DFD Level 0 - Context Diagram
+title Blood Donation Management System - Context Diagram (Level 0)
+
+actor Donor
+actor "Staff/Admin" as Staff
+database "PostgreSQL Database" as DB
+
+rectangle "Blood Donation\nManagement System" as System {
+}
+
+Donor --> System: Donor Registration Info
+Donor --> System: Donation Details
+Donor --> System: Blood Request Info
+
+Staff --> System: Login Credentials
+Staff --> System: Site Management Info
+
+System --> Donor: Donor Information
+System --> Donor: Blood Availability Status
+System --> Staff: Donation Records
+
+System --> DB: User Data
+System --> DB: Donor Data
+System --> DB: Donation Data
+System --> DB: Site Data
+System --> DB: Blood Request Data
+
+DB --> System: User Data
+DB --> System: Donor Data
+DB --> System: Donation Data
+DB --> System: Site Data
+DB --> System: Blood Request Data
+
+@enduml
+

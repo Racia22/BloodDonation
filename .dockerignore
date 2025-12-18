@@ -1,0 +1,12 @@
+**Replace the content** with this:
+```
+.git
+.idea
+nbproject
+build
+test
+src
+*.log
+*.tmp
+.DS_Store
+docs

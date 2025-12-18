@@ -1,0 +1,93 @@
+@startuml DFD Level 2 - Donation Management (Best Layout)
+title Donation Management - Level 2 DFD (Organized & Clear)
+
+skinparam rectangle {
+    BackgroundColor LightBlue
+    BorderColor DarkBlue
+    FontSize 10
+}
+
+skinparam storage {
+    BackgroundColor LightPink
+    BorderColor DarkRed
+    FontSize 10
+}
+
+skinparam arrow {
+    Color DarkBlue
+    FontSize 9
+}
+
+' External Entities - Top
+actor Donor
+actor "Staff/Admin" as Staff
+database "PostgreSQL Database" as DB
+
+package "3.0 Donation Management" #LightGray {
+    
+    ' Processes arranged in logical flow
+    rectangle "3.1\nValidate\nDonation Input" as P31
+    rectangle "3.2\nValidate\nDonor & Site" as P32
+    rectangle "3.3\nRegister\nDonation" as P33
+    rectangle "3.4\nUpdate\nDonation" as P34
+    rectangle "3.5\nView\nDonations" as P35
+    
+    ' Data stores - separate section
+    storage "D2: Donors" as D2
+    storage "D3: Donations" as D3
+    storage "D4: Sites" as D4
+}
+
+' REGISTRATION FLOW - Clear vertical flow
+Donor -down-> P31: [1] Donation Details\n(donor_id, site_id,\nblood_group, quantity)
+
+P31 -down-> P32: [2] Validated Input
+P31 -left-> Donor: [2a] Validation Error
+
+P32 -right-> D2: [3] Request Donor Info
+D2 -left-> P32: [3a] Donor Data
+
+P32 -right-> D4: [4] Request Site Info
+D4 -left-> P32: [4a] Site Data
+
+P32 -down-> P33: [5] Donor & Site\nValidated
+
+P33 -right-> D3: [6] Store Donation Data
+D3 -left-> P33: [6a] Confirmation
+
+P33 -left-> Donor: [7] Success Message
+
+' UPDATE FLOW - Separate horizontal flow
+Staff -right-> P34: [8] Update Donation\nDetails
+
+P34 -down-> D2: [9] Request Donor Info\n(if updated)
+D2 -up-> P34: [9a] Donor Data
+
+P34 -down-> D4: [10] Request Site Info\n(if updated)
+D4 -up-> P34: [10a] Site Data
+
+P34 -down-> D3: [11] Updated Donation\nData
+D3 -up-> P34: [11a] Update Confirmation
+
+P34 -left-> Staff: [12] Update Status
+
+' VIEW FLOW - Simple flow
+Staff -right-> P35: [13] View Request
+
+P35 -down-> D3: [14] Request Records
+D3 -up-> P35: [14a] Donation Records
+
+P35 -left-> Staff: [15] Display Records
+
+' DATABASE - Bottom connections, clear
+D2 -down-> DB: Donor Data (W)
+DB -up-> D2: Donor Data (R)
+
+D3 -down-> DB: Donation Data (W)
+DB -up-> D3: Donation Data (R)
+
+D4 -down-> DB: Site Data (W)
+DB -up-> D4: Site Data (R)
+
+@enduml
+

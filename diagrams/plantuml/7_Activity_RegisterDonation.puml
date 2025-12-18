@@ -1,0 +1,63 @@
+@startuml Activity Diagram - Register Donation
+title Register Donation Activity Diagram
+
+start
+
+:User opens Register Donation form;
+
+:Enter donation details:\n- Donor ID\n- Site ID\n- Blood Group\n- Quantity (ml);
+
+:Click Register button;
+
+if (All fields filled?) then (no)
+    :Display error:\n"Required fields missing";
+    stop
+else (yes)
+endif
+
+if (Quantity between 250-500ml?) then (no)
+    :Display error:\n"Quantity must be 250-500ml";
+    stop
+else (yes)
+endif
+
+:Call DonationsController.registerDonation();
+
+:Validate donation object;
+
+:Call DonorsDao.findDonorsbyID();
+
+if (Donor exists?) then (no)
+    :Display error:\n"Donor not found";
+    stop
+else (yes)
+endif
+
+:Call SitesDao.findSiteByID();
+
+if (Site exists?) then (no)
+    :Display error:\n"Site not found";
+    stop
+else (yes)
+endif
+
+:Call DonationsDao.registerDonations();
+
+:Validate quantity at DAO level\n(250-500ml check);
+
+:Execute SQL INSERT INTO donations;
+
+if (Insert successful?) then (yes)
+    :Return success status;
+    :Display success message;
+    :Clear form fields;
+    :Load next donation ID;
+    :Refresh donation table;
+    stop
+else (no)
+    :Display error:\n"Registration failed";
+    stop
+endif
+
+@enduml
+

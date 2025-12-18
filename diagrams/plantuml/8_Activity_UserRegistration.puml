@@ -1,0 +1,62 @@
+@startuml Activity Diagram - User Registration
+title User Registration Activity Diagram
+
+start
+
+:User opens Registration form;
+
+:Enter registration details:\n- Username\n- Email\n- Password;
+
+:Validate username format\n(letters only, max 30 chars);
+
+if (Username valid?) then (no)
+    :Display error:\n"Invalid username format";
+    stop
+else (yes)
+endif
+
+:Validate email format\n(standard email pattern);
+
+if (Email valid?) then (no)
+    :Display error:\n"Invalid email format";
+    stop
+else (yes)
+endif
+
+:Validate password length\n(minimum 6 characters);
+
+if (Password valid?) then (no)
+    :Display error:\n"Password must be at least 6 characters";
+    stop
+else (yes)
+endif
+
+:Click Register button;
+
+:Call UserController.addUser();
+
+:Call UserDao.addUser();
+
+:Check if email already exists;
+
+if (Email already registered?) then (yes)
+    :Display error:\n"Email already registered";
+    stop
+else (no)
+endif
+
+:Execute SQL INSERT INTO users;
+
+if (Insert successful?) then (yes)
+    :Return success status;
+    :Display success message:\n"Registration successful!";
+    :Open Dashboard;
+    :Close Registration form;
+    stop
+else (no)
+    :Display error:\n"Registration failed";
+    stop
+endif
+
+@enduml
+

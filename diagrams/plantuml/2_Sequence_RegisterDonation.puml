@@ -1,0 +1,71 @@
+@startuml Register Donation Sequence Diagram
+title Register Donation Sequence Diagram
+
+actor User
+participant "Dashboard View" as Dashboard
+participant "DonationsController" as Controller
+participant "DonationsDao" as DonationsDAO
+participant "DonorsDao" as DonorsDAO
+participant "SitesDao" as SitesDAO
+database "PostgreSQL Database" as DB
+
+User -> Dashboard: 1. Enter donation details\n(donor_id, site_id, blood_group, quantity)
+User -> Dashboard: 2. Click Register Button
+activate Dashboard
+
+Dashboard -> Dashboard: 3. Validate inputs (not empty)
+Dashboard -> Dashboard: 4. Validate quantity (250-500ml)
+Dashboard -> Controller: 5. registerDonation(donation)
+activate Controller
+
+Controller -> Controller: 6. Validate donation object
+Controller -> DonorsDAO: 7. findDonorsbyID(donor_id)
+activate DonorsDAO
+DonorsDAO -> DB: 8. SELECT * FROM donors WHERE donor_id=?
+activate DB
+DB --> DonorsDAO: 9. Return Donor record
+deactivate DB
+DonorsDAO --> Controller: 10. Return Donor object or null
+deactivate DonorsDAO
+
+alt Donor exists
+    Controller -> SitesDAO: 11. findSiteByID(site_id)
+    activate SitesDAO
+    SitesDAO -> DB: 12. SELECT * FROM sites WHERE site_id=?
+    activate DB
+    DB --> SitesDAO: 13. Return Site record
+    deactivate DB
+    SitesDAO --> Controller: 14. Return Site object or null
+    deactivate SitesDAO
+    
+    alt Site exists
+        Controller -> DonationsDAO: 15. registerDonations(donation)
+        activate DonationsDAO
+        DonationsDAO -> DonationsDAO: 16. Validate quantity (250-500ml)
+        DonationsDAO -> DB: 17. INSERT INTO donations\n(donor_id, site_id, blood_group, quantity_ml, donation_date)
+        activate DB
+        DB --> DonationsDAO: 18. Return rows affected
+        deactivate DB
+        DonationsDAO --> Controller: 19. Return success status
+        deactivate DonationsDAO
+        
+        Controller --> Dashboard: 20. Return success status
+        Dashboard -> Dashboard: 21. Show success message
+        Dashboard -> Dashboard: 22. Refresh form & load next ID
+        Dashboard --> User: 23. Display confirmation
+    else Site not found
+        SitesDAO --> Controller: 14. Return null
+        Controller --> Dashboard: 15. Return error
+        Dashboard --> User: 16. Show error: Site not found
+    end
+else Donor not found
+    DonorsDAO --> Controller: 10. Return null
+    Controller --> Dashboard: 11. Return error
+    Dashboard --> User: 12. Show error: Donor not found
+end
+
+deactivate Controller
+deactivate Dashboard
+
+@enduml
+
